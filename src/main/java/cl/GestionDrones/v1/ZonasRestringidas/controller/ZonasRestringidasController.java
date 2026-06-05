@@ -147,8 +147,8 @@ public class ZonasRestringidasController {
 
     }
     
-    @GetMapping("/buscar/nombre")
-    public ResponseEntity<Map<String, Object>> buscarPorNombre(@RequestParam String lugar) {
+    @GetMapping("/buscar/nombre/{lugar}")
+    public ResponseEntity<Map<String, Object>> buscarPorNombre(@PathVariable String lugar) {
         List<ZonasRestringidas> zonas = service.buscarPorNombre(lugar);
         Map<String, Object> response = new HashMap<>();
 
@@ -164,9 +164,8 @@ public class ZonasRestringidasController {
     }
 
     
-    // buscar/motivo?texto=Seguridad
-    @GetMapping("/buscar/motivo")
-    public ResponseEntity<Map<String, Object>> buscarPorMotivo(@RequestParam String texto) {
+    @GetMapping("/buscar/motivo/{texto}") 
+    public ResponseEntity<Map<String, Object>> buscarPorMotivo(@PathVariable String texto) {
         List<ZonasRestringidas> zonas = service.buscarPorMotivo(texto);
         Map<String, Object> response = new HashMap<>();
 
