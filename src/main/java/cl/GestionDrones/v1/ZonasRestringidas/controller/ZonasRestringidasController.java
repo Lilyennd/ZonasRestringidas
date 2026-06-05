@@ -179,4 +179,23 @@ public class ZonasRestringidasController {
         response.put("datos", zonas);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+    @PostMapping("/verificar")
+    public ResponseEntity<Object> verificarCoordenadas(
+    @RequestBody Map<String, String> body) {
+
+    String coordenadasOrigen = body.get("coordenadasOrigen");
+    String coordenadasDestino = body.get("coordenadasDestino");
+
+    if (coordenadasOrigen == null || coordenadasDestino == null) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("status", HttpStatus.BAD_REQUEST.value());
+        error.put("error", "Las coordenadas de origen y destino son obligatorias");
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    boolean estaRestringida = service.verificarCoordenadas(coordenadasOrigen, coordenadasDestino);
+    return ResponseEntity.ok(estaRestringida);
+}
 }
