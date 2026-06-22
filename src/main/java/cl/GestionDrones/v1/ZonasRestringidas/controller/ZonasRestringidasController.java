@@ -14,6 +14,7 @@ import cl.GestionDrones.v1.ZonasRestringidas.service.ZonasRestringidasService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -85,6 +86,18 @@ public class ZonasRestringidasController {
     }
 
     @Operation(summary = "Registrar una nueva zona restringida", description = "Crea una nueva delimitación espacial con restricción de vuelo")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Estructura JSON de la nueva zona restringida",
+        required = true,
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = CreateZonasRestringidasRequest.class),
+            examples = @ExampleObject(
+                name = "Ejemplo de Registro de Zona",
+                value = "{\n  \"nombreLugar\": \"Aeródromo Vitacura\",\n  \"motivo\": \"Zona de tráfico aéreo civil intenso y planeadores\",\n  \"latitud\": -33.3852,\n  \"longitud\": -70.5514,\n  \"radioMetros\": 3000\n}"
+            )
+        )
+    )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Zona restringida registrada exitosamente", 
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ZonasRestringidas.class))),
@@ -92,7 +105,6 @@ public class ZonasRestringidasController {
     })
     @PostMapping
     public ResponseEntity<Map<String, Object>> crear(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Estructura JSON de la nueva zona restringida", required = true)
             @Valid @RequestBody CreateZonasRestringidasRequest request, 
             BindingResult result) {
         
@@ -112,6 +124,18 @@ public class ZonasRestringidasController {
     }
 
     @Operation(summary = "Actualizar zona restringida", description = "Modifica los límites o parámetros de una zona prohibida usando su ID")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Estructura JSON con los nuevos parámetros de la zona",
+        required = true,
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = UpdateZonasRequest.class),
+            examples = @ExampleObject(
+                name = "Ejemplo de Actualización de Zona",
+                value = "{\n  \"nombreLugar\": \"Aeródromo Vitacura - Ampliado\",\n  \"motivo\": \"Restricción preventiva por operaciones aéreas\",\n  \"latitud\": -33.3852,\n  \"longitud\": -70.5514,\n  \"radioMetros\": 4500\n}"
+            )
+        )
+    )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Zona restringida actualizada exitosamente", 
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ZonasRestringidas.class))),
@@ -122,7 +146,6 @@ public class ZonasRestringidasController {
     public ResponseEntity<Map<String, Object>> actualizar(
             @Parameter(description = "ID de la zona restringida a actualizar", required = true, example = "1")
             @PathVariable Integer id, 
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Estructura JSON con los nuevos parámetros de la zona", required = true)
             @Valid @RequestBody UpdateZonasRequest request, 
             BindingResult result) {
 
@@ -174,7 +197,7 @@ public class ZonasRestringidasController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Zonas encontradas con éxito", 
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = ZonasRestringidas.class))),
-        @ApiResponse(responseCode = "404", description = "No se encontraron zonas con el nombre especificado", content = @Content)
+        @ApiResponse(responseCode = "404", description = "No se encontraron zonas con el nombre Carson", content = @Content)
     })
     @GetMapping("/buscar/nombre/{lugar}")
     public ResponseEntity<Map<String, Object>> buscarPorNombre(
@@ -221,6 +244,17 @@ public class ZonasRestringidasController {
     }
 
     @Operation(summary = "Verificar coordenadas en zona restringida", description = "Analiza si un par de coordenadas de origen y destino intersectan con alguna zona restringida")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Objeto JSON que contiene 'coordenadasOrigen' y 'coordenadasDestino'",
+        required = true,
+        content = @Content(
+            mediaType = "application/json",
+            examples = @ExampleObject(
+                name = "Ejemplo de Verificación",
+                value = "{\n  \"coordenadasOrigen\": \"-33.4489,-70.6693\",\n  \"coordenadasDestino\": \"-33.3852,-70.5514\"\n}"
+            )
+        )
+    )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Análisis completado (Retorna true si interfiere, false en caso contrario)", 
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
@@ -228,7 +262,6 @@ public class ZonasRestringidasController {
     })
     @PostMapping("/verificar")
     public ResponseEntity<Object> verificarCoordenadas(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Objeto JSON que contiene 'coordenadasOrigen' y 'coordenadasDestino'", required = true)
         @RequestBody Map<String, String> body
     ) {
 
